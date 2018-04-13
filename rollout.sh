@@ -97,7 +97,7 @@ fi
 
 # Don't run Queries if RUN_SQL=false
 if [ "$RUN_SQL" == "false" ]; then
-	LIST=$(ls -d $PWD/0* | grep -v 05_sql)
+	LIST=$(ls -d $PWD/0* | grep -v 05_sql | grep -v report)
 else
 	LIST=$(ls -d $PWD/0*)
 fi
