@@ -1,9 +1,9 @@
 #!/bin/bash
-
+set -euxo pipefail
 PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 MYCMD="tpcds.sh"
-MYVAR="tpcds_variables.sh"
+CONFIG_FILE="$PWD/tpcds_variables.sh"
 ##################################################################################################################################################
 # Functions
 ##################################################################################################################################################
@@ -12,139 +12,143 @@ check_variables()
 	new_variable="0"
 
 	### Make sure variables file is available
-	if [ ! -f "$PWD/$MYVAR" ]; then
-		touch $PWD/$MYVAR
+	if [ ! -f "$CONFIG_FILE" ]; then
+		touch $CONFIG_FILE
+		echo "Touched $CONFIG_FILE"
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "REPO=" $MYVAR | wc -l)
+	echo "command: grep "REPO=" $CONFIG_FILE"
+	local count=$(grep "REPO=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "REPO=\"TPC-DS\"" >> $MYVAR
+		echo "REPO=\"TPC-DS\"" >> $CONFIG_FILE
+		echo "Wrote REPO=TPC-DS"
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "REPO_URL=" $MYVAR | wc -l)
+	local count=$(grep "REPO_URL=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "REPO_URL=\"https://github.com/Pivotal-DataFabric/TPC-DS\"" >> $MYVAR
+		echo "REPO_URL=\"https://github.com/Pivotal-DataFabric/TPC-DS\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "ADMIN_USER=" $MYVAR | wc -l)
+	local count=$(grep "ADMIN_USER=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "ADMIN_USER=\"gpadmin\"" >> $MYVAR
+		echo "ADMIN_USER=\"gpadmin\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "INSTALL_DIR=" $MYVAR | wc -l)
+	local count=$(grep "INSTALL_DIR=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "INSTALL_DIR=\"/pivotalguru\"" >> $MYVAR
+		echo "INSTALL_DIR=\"/pivotalguru\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "EXPLAIN_ANALYZE=" $MYVAR | wc -l)
+	local count=$(grep "EXPLAIN_ANALYZE=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "EXPLAIN_ANALYZE=\"false\"" >> $MYVAR
+		echo "EXPLAIN_ANALYZE=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "SQL_VERSION=" $MYVAR | wc -l)
+	local count=$(grep "SQL_VERSION=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "SQL_VERSION=\"tpcds\"" >> $MYVAR
+		echo "SQL_VERSION=\"tpcds\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "RANDOM_DISTRIBUTION=" $MYVAR | wc -l)
+	local count=$(grep "RANDOM_DISTRIBUTION=" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RANDOM_DISTRIBUTION=\"false\"" >> $MYVAR
+		echo "RANDOM_DISTRIBUTION=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "MULTI_USER_COUNT" $MYVAR | wc -l)
+	local count=$(grep "MULTI_USER_COUNT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "MULTI_USER_COUNT=\"5\"" >> $MYVAR
+		echo "MULTI_USER_COUNT=\"5\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	local count=$(grep "GEN_DATA_SCALE" $MYVAR | wc -l)
+	local count=$(grep "GEN_DATA_SCALE" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "GEN_DATA_SCALE=\"3000\"" >> $MYVAR
+		echo "GEN_DATA_SCALE=\"3000\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#00
-	local count=$(grep "RUN_COMPILE_TPCDS" $MYVAR | wc -l)
+	local count=$(grep "RUN_COMPILE_TPCDS" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_COMPILE_TPCDS=\"false\"" >> $MYVAR
+		echo "RUN_COMPILE_TPCDS=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#01
-	local count=$(grep "RUN_GEN_DATA" $MYVAR | wc -l)
+	local count=$(grep "RUN_GEN_DATA" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_GEN_DATA=\"false\"" >> $MYVAR
+		echo "RUN_GEN_DATA=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#02
-	local count=$(grep "RUN_INIT" $MYVAR | wc -l)
+	local count=$(grep "RUN_INIT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_INIT=\"true\"" >> $MYVAR
+		echo "RUN_INIT=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#03
-	local count=$(grep "RUN_DDL" $MYVAR | wc -l)
+	local count=$(grep "RUN_DDL" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_DDL=\"true\"" >> $MYVAR
+		echo "RUN_DDL=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#04
-	local count=$(grep "RUN_LOAD" $MYVAR | wc -l)
+	local count=$(grep "RUN_LOAD" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_LOAD=\"true\"" >> $MYVAR
+		echo "RUN_LOAD=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#05
-	local count=$(grep "RUN_SQL" $MYVAR | wc -l)
+	local count=$(grep "RUN_SQL" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_SQL=\"true\"" >> $MYVAR
+		echo "RUN_SQL=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#06
-	local count=$(grep "RUN_SINGLE_USER_REPORT" $MYVAR | wc -l)
+	local count=$(grep "RUN_SINGLE_USER_REPORT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_SINGLE_USER_REPORT=\"true\"" >> $MYVAR
+		echo "RUN_SINGLE_USER_REPORT=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#07
-	local count=$(grep "RUN_MULTI_USER" $MYVAR | wc -l)
+	local count=$(grep "RUN_MULTI_USER" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_MULTI_USER=\"true\"" >> $MYVAR
+		echo "RUN_MULTI_USER=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#08
-	local count=$(grep "RUN_MULTI_USER_REPORT" $MYVAR | wc -l)
+	local count=$(grep "RUN_MULTI_USER_REPORT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "RUN_MULTI_USER_REPORT=\"true\"" >> $MYVAR
+		echo "RUN_MULTI_USER_REPORT=\"true\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#09
-	local count=$(grep "OPTIMIZER" $MYVAR | wc -l)
+	local count=$(grep "OPTIMIZER" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "OPTIMIZER=\"on\"" >> $MYVAR
+		echo "OPTIMIZER=\"on\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#10
-	local count=$(grep "QUERY_TIMEOUT" $MYVAR | wc -l)
+	local count=$(grep "QUERY_TIMEOUT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "QUERY_TIMEOUT=\"0\"" >> $MYVAR
+		echo "QUERY_TIMEOUT=\"0\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#11
-	local count=$(grep "EXPLAIN_PLAN" $MYVAR | wc -l)
+	local count=$(grep "EXPLAIN_PLAN" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "EXPLAIN_PLAN=\"false\"" >> $MYVAR
+		echo "EXPLAIN_PLAN=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 	#12
-	local count=$(grep "EXTRACT_GPSD" $MYVAR | wc -l)
+	local count=$(grep "EXTRACT_GPSD" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
-		echo "EXTRACT_GPSD=\"false\"" >> $MYVAR
+		echo "EXTRACT_GPSD=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
 
 	echo "############################################################################"
-	echo "Sourcing $MYVAR"
+	echo "Sourcing $CONFIG_FILE"
 	echo "############################################################################"
 	echo ""
-	source $MYVAR
+	source $CONFIG_FILE
+	cat $CONFIG_FILE
 }
 exit_if_new_vars()
 {
@@ -237,13 +241,13 @@ repo_init()
 			echo "-------------------------------------------------------------------------"
 			mkdir $INSTALL_DIR/$REPO
 			chown $ADMIN_USER $INSTALL_DIR/$REPO
-			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true; git clone --depth=1 $REPO_URL" $ADMIN_USER
+			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true; git clone $REPO_URL" $ADMIN_USER
 		fi
 	else
 		if [ "$internet_down" -eq "0" ]; then
 			git config --global user.email "$ADMIN_USER@$HOSTNAME"
 			git config --global user.name "$ADMIN_USER"
-			su -c "cd $INSTALL_DIR/$REPO; GIT_SSL_NO_VERIFY=true; git fetch --all; git reset --hard origin/master" $ADMIN_USER
+			su -c "cd $INSTALL_DIR/$REPO; GIT_SSL_NO_VERIFY=true; git fetch --all; git reset --hard origin/ubuntu" $ADMIN_USER
 		fi
 	fi
 }
@@ -293,8 +297,9 @@ echo_variables()
 
 copy_tpcds_variable()
 {
-    cp $PWD/tpcds_variables.sh $INSTALL_DIR/$REPO/tpcds_variables.sh
+    cp $CONFIG_FILE $INSTALL_DIR/$REPO/tpcds_variables.sh
     chmod 755 $INSTALL_DIR/$REPO/tpcds_variables.sh
+    cat $INSTALL_DIR/$REPO/tpcds_variables.sh
 }
 
 ##################################################################################################################################################
@@ -303,15 +308,20 @@ copy_tpcds_variable()
 
 check_user
 check_variables
-yum_installs
+#yum_installs
 repo_init
-script_check
+#script_check
 exit_if_new_vars
-check_sudo
+#check_sudo
 echo_variables
 copy_tpcds_variable
 
-su --session-command="cd \"$INSTALL_DIR/$REPO\"; ./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCDS $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $EXPLAIN_PLAN $EXTRACT_GPSD $OPTIMIZER $QUERY_TIMEOUT" $ADMIN_USER
+export MASTER_DATA_DIRECTORY=/greenplum/data-1
+
+CMD_CD="cd \"$INSTALL_DIR/$REPO\";"
+CMD_ROLLOUT="./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCDS $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $EXPLAIN_PLAN $EXTRACT_GPSD $OPTIMIZER $QUERY_TIMEOUT"
+CMD="$CMD_CD $CMD_ROLLOUT"
+su -c "$CMD" $ADMIN_USER
 exit_status=$?
 if [[ $exit_status -ne 0 ]]; then
 	exit $exit_status
