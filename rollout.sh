@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/functions.sh
+MAIN_ROLLOUT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $MAIN_ROLLOUT_DIR/functions.sh
 source_bashrc
 
 GEN_DATA_SCALE="$1"
@@ -68,38 +68,38 @@ echo "EXTRACT_GPSD: $EXTRACT_GPSD"
 echo "############################################################################"
 echo ""
 if [ "$RUN_COMPILE_TPCDS" == "true" ]; then
-	rm -f $PWD/log/end_compile_tpcds.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_compile_tpcds.log
 fi
 if [ "$RUN_GEN_DATA" == "true" ]; then
-	rm -f $PWD/log/end_gen_data.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_gen_data.log
 fi
 if [ "$RUN_INIT" == "true" ]; then
-	rm -f $PWD/log/end_init.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_init.log
 fi
 if [ "$RUN_DDL" == "true" ]; then
-	rm -f $PWD/log/end_ddl.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_ddl.log
 fi
 if [ "$RUN_LOAD" == "true" ]; then
-	rm -f $PWD/log/end_load.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_load.log
 fi
 if [ "$RUN_SQL" == "true" ]; then
-	rm -f $PWD/log/end_sql.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_sql.log
 fi
 if [ "$RUN_SINGLE_USER_REPORT" == "true" ]; then
-	rm -f $PWD/log/end_single_user_reports.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_single_user_reports.log
 fi
 if [ "$RUN_MULTI_USER" == "true" ]; then
-	rm -f $PWD/log/end_testing_*.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_testing_*.log
 fi
 if [ "$RUN_MULTI_USER_REPORT" == "true" ]; then
-	rm -f $PWD/log/end_multi_user_reports.log
+	rm -f $MAIN_ROLLOUT_DIR/log/end_multi_user_reports.log
 fi
 
 # Don't run Queries if RUN_SQL=false
 if [ "$RUN_SQL" == "false" ]; then
-	LIST=$(ls -d $PWD/0* | grep -v 05_sql | grep -v report)
+	LIST=$(ls -d $MAIN_ROLLOUT_DIR/0* | grep -v 05_sql | grep -v report)
 else
-	LIST=$(ls -d $PWD/0*)
+	LIST=$(ls -d $MAIN_ROLLOUT_DIR/0*)
 fi
 
 for i in $LIST; do

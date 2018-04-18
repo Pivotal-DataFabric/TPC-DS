@@ -1,6 +1,6 @@
 #!/bin/sh
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/tpcds_variables.sh
+UPDATE_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $UPDATE_DIR/tpcds_variables.sh
 
 if [ "$ADMIN_USER" == "" ]; then
 	echo "ADMIN username not found in tpcds_variables.sh!"

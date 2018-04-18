@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+DATA_01_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $DATA_01_DIR/../functions.sh
 source_bashrc
 
 GEN_DATA_SCALE=$1
@@ -21,7 +21,7 @@ fi
 get_count_generate_data()
 {
 	count="0"
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $DATA_01_DIR/../segment_hosts.txt); do
 		next_count=$(ssh -n -f $i "bash -c 'ps -ef | grep generate_data.sh | grep -v grep | wc -l'")
 		count=$(($count + $next_count))
 	done
@@ -40,12 +40,12 @@ create_table_data_dir()
 		SEGMENTS="1"
 		#SEGMENTS=$(hawq state | grep "Total segments count" | awk -F '=' '{print $2}')
 	fi
-	psql -a -v ON_ERROR_STOP=1 -v SEGMENTS="$SEGMENTS" -f $PWD/data_dir.sql
+	psql -a -v ON_ERROR_STOP=1 -v SEGMENTS="$SEGMENTS" -f $DATA_01_DIR/data_dir.sql
 }
 
 kill_orphaned_data_gen()
 {
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $DATA_01_DIR/../segment_hosts.txt); do
 		echo "$i:kill any orphaned processes"
 		for k in $(ssh $i "ps -ef | grep dsdgen | grep -v grep" | awk -F ' ' '{print $2}'); do
 			echo killing $k
@@ -57,9 +57,9 @@ kill_orphaned_data_gen()
 copy_generate_data()
 {
 	#copy generate_data.sh to ~/
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $DATA_01_DIR/../segment_hosts.txt); do
 		echo "copy generate_data.sh to $i:$ADMIN_HOME"
-		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $PWD/generate_data.sh $i:$ADMIN_HOME/
+		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $DATA_01_DIR/generate_data.sh $i:$ADMIN_HOME/
 	done
 }
 
@@ -89,7 +89,7 @@ gen_data()
 		done
 
 		CHILD="0"
-		for i in $(cat $PWD/../segment_hosts.txt); do
+		for i in $(cat $DATA_01_DIR/../segment_hosts.txt); do
 			EXT_HOST=$i
 			for x in $(seq 1 $nvseg_perseg); do
 				GEN_DATA_PATH="$SEG_DATA_PATH""/pivotalguru_""$x"
@@ -126,8 +126,8 @@ echo "Done generating data"
 echo ""
 
 echo "Generate queries based on scale"
-cd $PWD
-$PWD/generate_queries.sh $GEN_DATA_SCALE
+cd $DATA_01_DIR
+$DATA_01_DIR/generate_queries.sh $GEN_DATA_SCALE
 
 log
 

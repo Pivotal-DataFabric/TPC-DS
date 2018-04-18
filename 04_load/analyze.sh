@@ -3,11 +3,11 @@
 # not set on purpose because some versions don't have analyzedb
 #set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+ANALYZE_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $ANALYZE_DIR/../functions.sh
 source_bashrc
 
-max_id=$(ls $PWD/*.sql | tail -1)
+max_id=$(ls $ANALYZE_DIR/*.sql | tail -1)
 max_id=$(basename $max_id | awk -F '.' '{print $1}')
 
 analyzedb --help 2>&1 > /dev/null

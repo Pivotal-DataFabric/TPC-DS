@@ -1,7 +1,7 @@
 #!/bin/bash
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+GEN_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $GEN_DIR/../functions.sh
 source_bashrc
 
 set -e
@@ -18,12 +18,12 @@ if [ "$GEN_DATA_SCALE" == "" ]; then
 	exit 1
 fi
 
-rm -f $PWD/query_0.sql
+rm -f $GEN_DIR/query_0.sql
 
-echo "$PWD/dsqgen -input $PWD/query_templates/templates.lst -directory $PWD/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $PWD"
-$PWD/dsqgen -input $PWD/query_templates/templates.lst -directory $PWD/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $PWD
+echo "$GEN_DIR/dsqgen -input $GEN_DIR/query_templates/templates.lst -directory $GEN_DIR/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $GEN_DIR"
+$GEN_DIR/dsqgen -input $GEN_DIR/query_templates/templates.lst -directory $GEN_DIR/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $GEN_DIR
 
-rm -f $PWD/../05_sql/*.query.*.sql
+rm -f $GEN_DIR/../05_sql/*.query.*.sql
 
 for p in $(seq 1 99); do
 	q=$(printf %02d $query_id)
@@ -31,7 +31,7 @@ for p in $(seq 1 99); do
 	template_filename=query$p.tpl
 	start_position=""
 	end_position=""
-	for pos in $(grep -n $template_filename $PWD/query_0.sql | awk -F ':' '{print $1}'); do
+	for pos in $(grep -n $template_filename $GEN_DIR/query_0.sql | awk -F ':' '{print $1}'); do
 		if [ "$start_position" == "" ]; then
 			start_position=$pos
 		else
@@ -39,13 +39,13 @@ for p in $(seq 1 99); do
 		fi
 	done
 
-	echo "echo \":EXPLAIN_ANALYZE\" > $PWD/../05_sql/$filename"
-	echo ":EXPLAIN_ANALYZE" > $PWD/../05_sql/$filename
-	echo "sed -n \"$start_position\",\"$end_position\"p $PWD/query_0.sql >> $PWD/../05_sql/$filename"
-	sed -n "$start_position","$end_position"p $PWD/query_0.sql >> $PWD/../05_sql/$filename
+	echo "echo \":EXPLAIN_ANALYZE\" > $GEN_DIR/../05_sql/$filename"
+	echo ":EXPLAIN_ANALYZE" > $GEN_DIR/../05_sql/$filename
+	echo "sed -n \"$start_position\",\"$end_position\"p $GEN_DIR/query_0.sql >> $GEN_DIR/../05_sql/$filename"
+	sed -n "$start_position","$end_position"p $GEN_DIR/query_0.sql >> $GEN_DIR/../05_sql/$filename
 	query_id=$(($query_id + 1))
 	file_id=$(($file_id + 1))
-	echo "Completed: $PWD/../05_sql/$filename"
+	echo "Completed: $GEN_DIR/../05_sql/$filename"
 done
 
 echo ""
@@ -55,7 +55,7 @@ arr=("114.tpcds.14.sql" "123.tpcds.23.sql" "124.tpcds.24.sql" "139.tpcds.39.sql"
 
 for z in "${arr[@]}"; do
 	echo $z
-	myfilename=$PWD/../05_sql/$z
+	myfilename=$GEN_DIR/../05_sql/$z
 	echo "myfilename: $myfilename"
 	pos=$(grep -n ";" $myfilename | awk -F ':' '{print $1}' | head -1)
 	pos=$(($pos+1))

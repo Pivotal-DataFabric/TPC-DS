@@ -8,22 +8,22 @@ if [ "$RUN_MULTI_USER_REPORT" == "false" ]; then
 	exit 0
 fi
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+MULTI_8_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $MULTI_8_DIR/../functions.sh
 source_bashrc
 step="multi_user_reports"
 
 init_log $step
 
-for i in $(ls $PWD/*.sql | grep -v report.sql); do
+for i in $(ls $MULTI_8_DIR/*.sql | grep -v report.sql); do
         schema_name=`echo $i | awk -F '.' '{print $2}'`
-	EXECUTE="'cat $PWD/../log/rollout_$schema_name*.log'"
+	EXECUTE="'cat $MULTI_8_DIR/../log/rollout_$schema_name*.log'"
         echo "psql -v ON_ERROR_STOP=ON -a -f $i -v EXECUTE=\"$EXECUTE\""
         psql -v ON_ERROR_STOP=ON -a -f $i -v EXECUTE="$EXECUTE"
         echo ""
 done
 
-psql -F $'\t' -A -v ON_ERROR_STOP=ON -P pager=off -f $PWD/detailed_report.sql
+psql -F $'\t' -A -v ON_ERROR_STOP=ON -P pager=off -f $MULTI_8_DIR/detailed_report.sql
 echo ""
 
 end_step $step

@@ -1,10 +1,10 @@
 #!/bin/bash
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+INIT_2_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $INIT_2_DIR/../functions.sh
 source_bashrc
-source $PWD/../tpcds_variables.sh
+source $INIT_2_DIR/../tpcds_variables.sh
 
 step=init
 init_log $step
@@ -14,19 +14,19 @@ table_name="init"
 
 set_segment_bashrc()
 {
-	echo "if [ -f /etc/bashrc ]; then" > $PWD/segment_bashrc
-	echo "	. /etc/bashrc" >> $PWD/segment_bashrc
-	echo "fi" >> $PWD/segment_bashrc
-	echo "source $GREENPLUM_PATH" >> $PWD/segment_bashrc
-	chmod 755 $PWD/segment_bashrc
+	echo "if [ -f /etc/bashrc ]; then" > $INIT_2_DIR/segment_bashrc
+	echo "	. /etc/bashrc" >> $INIT_2_DIR/segment_bashrc
+	echo "fi" >> $INIT_2_DIR/segment_bashrc
+	echo "source $GREENPLUM_PATH" >> $INIT_2_DIR/segment_bashrc
+	chmod 755 $INIT_2_DIR/segment_bashrc
 
 	#copy generate_data.sh to ~/
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $INIT_2_DIR/../segment_hosts.txt); do
 		# don't overwrite the master.  Only needed on single node installs
 		shortname=$(echo $i | awk -F '.' '{print $1}')
 		if [ "$MASTER_HOST" != "$shortname" ]; then
 			echo "copy new .bashrc to $i:$ADMIN_HOME"
-			scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $PWD/segment_bashrc $i:$ADMIN_HOME/.bashrc
+			scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $INIT_2_DIR/segment_bashrc $i:$ADMIN_HOME/.bashrc
 		fi
 	done
 }
@@ -85,11 +85,11 @@ copy_config()
 {
 	echo "copy config files"
 	if [ "$MASTER_DATA_DIRECTORY" != "" ]; then
-		cp $MASTER_DATA_DIRECTORY/pg_hba.conf $PWD/../log/
-		cp $MASTER_DATA_DIRECTORY/postgresql.conf $PWD/../log/
+		cp $MASTER_DATA_DIRECTORY/pg_hba.conf $INIT_2_DIR/../log/
+		cp $MASTER_DATA_DIRECTORY/postgresql.conf $INIT_2_DIR/../log/
 	fi
 	#gp_segment_configuration
-	psql -q -A -t -v ON_ERROR_STOP=ON -c "SELECT * FROM gp_segment_configuration" -o $PWD/../log/gp_segment_configuration.txt
+	psql -q -A -t -v ON_ERROR_STOP=ON -c "SELECT * FROM gp_segment_configuration" -o $INIT_2_DIR/../log/gp_segment_configuration.txt
 }
 
 set_psqlrc()

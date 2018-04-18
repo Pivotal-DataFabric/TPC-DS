@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+DDL_3_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $DDL_3_DIR/../functions.sh
 source_bashrc
 
 GEN_DATA_SCALE=$1
@@ -29,7 +29,7 @@ else
 	filter="tpcds"
 fi
 
-for i in $(ls $PWD/*.$filter.*.sql); do
+for i in $(ls $DDL_3_DIR/*.$filter.*.sql); do
 	id=`echo $i | awk -F '.' '{print $1}'`
 	schema_name=`echo $i | awk -F '.' '{print $2}'`
 	table_name=`echo $i | awk -F '.' '{print $3}'`
@@ -40,7 +40,7 @@ for i in $(ls $PWD/*.$filter.*.sql); do
 	if [ "$RANDOM_DISTRIBUTION" == "true" ]; then
 		DISTRIBUTED_BY="DISTRIBUTED RANDOMLY"
 	else
-		for z in $(cat $PWD/distribution.txt); do
+		for z in $(cat $DDL_3_DIR/distribution.txt); do
 			table_name2=`echo $z | awk -F '|' '{print $2}'`
 			if [ "$table_name2" == "$table_name" ]; then
 				distribution=`echo $z | awk -F '|' '{print $3}'`
@@ -61,7 +61,7 @@ for i in $(ls $PWD/*.$filter.*.sql); do
 done
 
 #external tables are the same for all SQL_VERSION
-for i in $(ls $PWD/*.ext_tpcds.*.sql); do
+for i in $(ls $DDL_3_DIR/*.ext_tpcds.*.sql); do
 	start_log
 
 	id=`echo $i | awk -F '.' '{print $1}'`
@@ -88,9 +88,9 @@ for i in $(ls $PWD/*.ext_tpcds.*.sql); do
 	else
 		#HAWQ 2
 		get_nvseg_perseg
-		segment_count=$(cat $PWD/../segment_hosts.txt | wc -l)
+		segment_count=$(cat $DDL_3_DIR/../segment_hosts.txt | wc -l)
 		segment_count=$(($segment_count * $nvseg_perseg))
-		for x in $(cat $PWD/../segment_hosts.txt); do
+		for x in $(cat $DDL_3_DIR/../segment_hosts.txt); do
 			EXT_HOST=$x
 			for y in $(seq 1 $nvseg_perseg); do
 				PORT=$(($GPFDIST_PORT + $y))

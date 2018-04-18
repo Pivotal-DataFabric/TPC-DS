@@ -27,8 +27,8 @@ if [[ "$SQL_VERSION" == "e9" || "$SQL_VERSION" == "imp" || "$SQL_VERSION" == "hi
 	fi
 fi
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+MULTI_7_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $MULTI_7_DIR/../functions.sh
 source_bashrc
 
 get_psql_count()
@@ -38,27 +38,27 @@ get_psql_count()
 
 get_file_count()
 {
-	file_count=$(ls $PWD/../log/end_testing* 2> /dev/null | wc -l)
+	file_count=$(ls $MULTI_7_DIR/../log/end_testing* 2> /dev/null | wc -l)
 }
 
 get_file_count
 if [ "$file_count" -ne "$MULTI_USER_COUNT" ]; then
 
-	rm -f $PWD/../log/end_testing_*.log
-	rm -f $PWD/../log/testing*.log
-	rm -f $PWD/../log/rollout_testing_*.log
-	rm -f $PWD/../log/*multi.explain_analyze.log
+	rm -f $MULTI_7_DIR/../log/end_testing_*.log
+	rm -f $MULTI_7_DIR/../log/testing*.log
+	rm -f $MULTI_7_DIR/../log/rollout_testing_*.log
+	rm -f $MULTI_7_DIR/../log/*multi.explain_analyze.log
 
 	if [[ "$SQL_VERSION" == "e9" || "$SQL_VERSION" == "imp" || "$SQL_VERSION" == "hive" ]]; then
 		echo "Using static $SQL_VERSION queries"
 	else
-		rm -f $PWD/query_*.sql
+		rm -f $MULTI_7_DIR/query_*.sql
 
 		#create each session's directory
-		sql_dir=$PWD/$session_id
+		sql_dir=$MULTI_7_DIR/$session_id
 		echo "sql_dir: $sql_dir"
 		for i in $(seq 1 $MULTI_USER_COUNT); do
-			sql_dir="$PWD"/"$session_id""$i"
+			sql_dir="$MULTI_7_DIR"/"$session_id""$i"
 			echo "checking for directory $sql_dir"
 			if [ ! -d "$sql_dir" ]; then
 				echo "mkdir $sql_dir"
@@ -69,27 +69,27 @@ if [ "$file_count" -ne "$MULTI_USER_COUNT" ]; then
 		done
 
 		#Create queries
-		echo "cd $PWD"
-		cd $PWD
-		echo "$PWD/dsqgen -streams $MULTI_USER_COUNT -input $PWD/query_templates/templates.lst -directory $PWD/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $PWD"
-		$PWD/dsqgen -streams $MULTI_USER_COUNT -input $PWD/query_templates/templates.lst -directory $PWD/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $PWD
+		echo "cd $MULTI_7_DIR"
+		cd $MULTI_7_DIR
+		echo "$MULTI_7_DIR/dsqgen -streams $MULTI_USER_COUNT -input $MULTI_7_DIR/query_templates/templates.lst -directory $MULTI_7_DIR/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $MULTI_7_DIR"
+		$MULTI_7_DIR/dsqgen -streams $MULTI_USER_COUNT -input $MULTI_7_DIR/query_templates/templates.lst -directory $MULTI_7_DIR/query_templates -dialect pivotal -scale $GEN_DATA_SCALE -verbose y -output $MULTI_7_DIR
 
 		#move the query_x.sql file to the correct session directory
-		for i in $(ls $PWD/query_*.sql); do
+		for i in $(ls $MULTI_7_DIR/query_*.sql); do
 			stream_number=$(basename $i | awk -F '.' '{print $1}' | awk -F '_' '{print $2}')
 			#going from base 0 to base 1
 			stream_number=$((stream_number+1))
 			echo "stream_number: $stream_number"
-			sql_dir=$PWD/$stream_number
+			sql_dir=$MULTI_7_DIR/$stream_number
 			echo "mv $i $sql_dir/"
 			mv $i $sql_dir/
 		done
 	fi
 
 	for x in $(seq 1 $MULTI_USER_COUNT); do
-		session_log=$PWD/../log/testing_session_$x.log
-		echo "$PWD/test.sh $GEN_DATA_SCALE $x $SQL_VERSION $EXPLAIN_ANALYZE"
-		$PWD/test.sh $GEN_DATA_SCALE $x $SQL_VERSION $EXPLAIN_ANALYZE > $session_log 2>&1 < $session_log &
+		session_log=$MULTI_7_DIR/../log/testing_session_$x.log
+		echo "$MULTI_7_DIR/test.sh $GEN_DATA_SCALE $x $SQL_VERSION $EXPLAIN_ANALYZE"
+		$MULTI_7_DIR/test.sh $GEN_DATA_SCALE $x $SQL_VERSION $EXPLAIN_ANALYZE > $session_log 2>&1 < $session_log &
 	done
 
 	sleep 60
@@ -100,8 +100,8 @@ if [ "$file_count" -ne "$MULTI_USER_COUNT" ]; then
 	while [ "$psql_count" -gt "0" ]; do
 		now=$(date)
 		echo "$now"
-		if ls $PWD/../log/rollout_testing_* 1>/dev/null 2>&1; then
-			wc -l $PWD/../log/rollout_testing_*
+		if ls $MULTI_7_DIR/../log/rollout_testing_* 1>/dev/null 2>&1; then
+			wc -l $MULTI_7_DIR/../log/rollout_testing_*
 		else
 			echo "No queries complete yet."
 		fi

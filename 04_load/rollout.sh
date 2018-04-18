@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+LOAD_4_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $LOAD_4_DIR/../functions.sh
 source_bashrc
 
 GEN_DATA_SCALE=$1
@@ -38,16 +38,16 @@ ADMIN_HOME=$(eval echo ~$ADMIN_USER)
 copy_script()
 {
 	echo "copy the start and stop scripts to the hosts in the cluster"
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $LOAD_4_DIR/../segment_hosts.txt); do
 		echo "scp start_gpfdist.sh stop_gpfdist.sh $ADMIN_USER@$i:$ADMIN_HOME/"
-		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $PWD/start_gpfdist.sh $PWD/stop_gpfdist.sh $ADMIN_USER@$i:$ADMIN_HOME/
+		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $LOAD_4_DIR/start_gpfdist.sh $LOAD_4_DIR/stop_gpfdist.sh $ADMIN_USER@$i:$ADMIN_HOME/
 	done
 }
 
 stop_gpfdist()
 {
 	echo "stop gpfdist on all ports"
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $LOAD_4_DIR/../segment_hosts.txt); do
 		ssh -n -f $i "bash -c 'cd ~/; ./stop_gpfdist.sh'"
 	done
 }
@@ -76,7 +76,7 @@ start_gpfdist()
 			SEG_DATA_PATH=$i
 		done
 
-		for i in $(cat $PWD/../segment_hosts.txt); do
+		for i in $(cat $LOAD_4_DIR/../segment_hosts.txt); do
 			EXT_HOST=$i
 			for x in $(seq 1 $nvseg_perseg); do
 				GEN_DATA_PATH="$SEG_DATA_PATH""/pivotalguru_""$x"
@@ -102,7 +102,7 @@ run_analyzedb() {
 copy_script
 start_gpfdist
 
-for i in $(ls $PWD/*.sql); do
+for i in $(ls $LOAD_4_DIR/*.sql); do
 	start_log
 
 	id=`echo $i | awk -F '.' '{print $1}'`

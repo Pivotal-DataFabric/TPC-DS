@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+CREATE_HIVE_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 number_of_queries="10"
 
@@ -11,8 +11,8 @@ create_files()
 			if [ "$i" -le "$number_of_queries" ]; then
 				q=$(printf %02d $query_id)
 				query=$(printf %02d $VALUE)
-				target="$PWD/$i/$q.query.$query.sql"	
-				source="$PWD/../../05_sql/*.hive.$query.sql"
+				target="$CREATE_HIVE_DIR/$i/$q.query.$query.sql"
+				source="$CREATE_HIVE_DIR/../../05_sql/*.hive.$query.sql"
 
 				if [ -f $source ]; then
 					echo "cp $source $target"
@@ -25,8 +25,8 @@ create_files()
 }
 
 for d in $(seq 1 5); do
-	echo "rm -f $PWD/$d/*"
-	rm -f $PWD/$d/*
+	echo "rm -f $CREATE_HIVE_DIR/$d/*"
+	rm -f $CREATE_HIVE_DIR/$d/*
 done
 
 query_id="100"

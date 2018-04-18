@@ -1,6 +1,5 @@
 #!/bin/bash
 set -e
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 GPFDIST_PORT=$1
 GEN_DATA_PATH=$2

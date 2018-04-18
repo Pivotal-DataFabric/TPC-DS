@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+CREATE_E9_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 number_of_queries="5"
 
@@ -11,8 +11,8 @@ create_files()
 			if [ "$i" -le "$number_of_queries" ]; then
 				q=$(printf %02d $query_id)
 				query=$(printf %02d $VALUE)
-				target="$PWD/$i/$q.query.$query.sql"	
-				source="$PWD/../../05_sql/*.e9.$query.sql"
+				target="$CREATE_E9_DIR/$i/$q.query.$query.sql"
+				source="$CREATE_E9_DIR/../../05_sql/*.e9.$query.sql"
 
 				echo "cp $source $target"
 				cp $source $target
@@ -23,8 +23,8 @@ create_files()
 }
 
 for d in $(seq 1 5); do
-	echo "rm -f $PWD/$d/*"
-	rm -f $PWD/$d/*
+	echo "rm -f $CREATE_E9_DIR/$d/*"
+	rm -f $CREATE_E9_DIR/$d/*
 done
 
 query_id="100"

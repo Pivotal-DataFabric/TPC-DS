@@ -2,8 +2,8 @@
 
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+TEST_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $TEST_DIR/../functions.sh
 
 GEN_DATA_SCALE=$1
 session_id=$2
@@ -25,9 +25,9 @@ step=testing_$session_id
 init_log $step
 
 if [ "$SQL_VERSION" != "tpcds" ]; then
-	sql_dir=$PWD/$SQL_VERSION/$session_id
+	sql_dir=$TEST_DIR/$SQL_VERSION/$session_id
 else
-	sql_dir=$PWD/$session_id
+	sql_dir=$TEST_DIR/$session_id
 	#going from 1 base to 0 base
 	tpcds_id=$((session_id-1))
 	tpcds_query_name="query_""$tpcds_id"".sql"
@@ -92,7 +92,7 @@ for i in $(ls $sql_dir/*.sql); do
 		tuples=$(($tuples-1))
 	else
 		myfilename=$(basename $i)
-		mylogfile=$PWD/../log/"$session_id"".""$myfilename"".multi.explain_analyze.log"
+		mylogfile=$TEST_DIR/../log/"$session_id"".""$myfilename"".multi.explain_analyze.log"
 		echo "psql -A -q -t -P pager=off -v ON_ERROR_STOP=ON -v EXPLAIN_ANALYZE=\"EXPLAIN ANALYZE\" -f $i"
 		psql -A -q -t -P pager=off -v ON_ERROR_STOP=ON -v EXPLAIN_ANALYZE="EXPLAIN ANALYZE" -f $i > $mylogfile
 		tuples="0"

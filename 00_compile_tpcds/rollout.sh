@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-source $PWD/../functions.sh
+COMPILE_0_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+source $COMPILE_0_DIR/../functions.sh
 source_bashrc
 
 GEN_DATA_SCALE=$1
@@ -27,7 +27,7 @@ table_name="compile"
 make_tpc()
 {
 	#compile the tools
-	cd $PWD/tools
+	cd $COMPILE_0_DIR/tools
 	rm -f *.o
 	make
 	cd ..
@@ -35,13 +35,13 @@ make_tpc()
 
 copy_tpc()
 {
-	cp $PWD/tools/dsqgen ../*_gen_data/
-	cp $PWD/tools/dsqgen ../*_multi_user/
-	cp $PWD/tools/tpcds.idx ../*_gen_data/
-	cp $PWD/tools/tpcds.idx ../*_multi_user/
+	cp $COMPILE_0_DIR/tools/dsqgen ../*_gen_data/
+	cp $COMPILE_0_DIR/tools/dsqgen ../*_multi_user/
+	cp $COMPILE_0_DIR/tools/tpcds.idx ../*_gen_data/
+	cp $COMPILE_0_DIR/tools/tpcds.idx ../*_multi_user/
 
 	#copy the compiled dsdgen program to the segment hosts
-	for i in $(cat $PWD/../segment_hosts.txt); do
+	for i in $(cat $COMPILE_0_DIR/../segment_hosts.txt); do
 		echo "copy tpcds binaries to $i:$ADMIN_HOME"
 		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no tools/dsdgen tools/tpcds.idx $i:$ADMIN_HOME/
 	done
@@ -49,10 +49,10 @@ copy_tpc()
 
 copy_queries()
 {
-	rm -rf $PWD/../*_gen_data/query_templates
-	rm -rf $PWD/../*_multi_user/query_templates
-	cp -R query_templates $PWD/../*_gen_data/
-	cp -R query_templates $PWD/../*_multi_user/
+	rm -rf $COMPILE_0_DIR/../*_gen_data/query_templates
+	rm -rf $COMPILE_0_DIR/../*_multi_user/query_templates
+	cp -R query_templates $COMPILE_0_DIR/../*_gen_data/
+	cp -R query_templates $COMPILE_0_DIR/../*_multi_user/
 }
 
 make_tpc

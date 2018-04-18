@@ -1,9 +1,9 @@
 #!/bin/bash
 set -euxo pipefail
-PWD=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
 MYCMD="tpcds.sh"
-CONFIG_FILE="$PWD/tpcds_variables.sh"
+CONFIG_FILE="$SCRIPT_DIR/tpcds_variables.sh"
 ##################################################################################################################################################
 # Functions
 ##################################################################################################################################################
@@ -242,9 +242,6 @@ repo_init()
 			mkdir $INSTALL_DIR/$REPO
 			chown $ADMIN_USER $INSTALL_DIR/$REPO
 			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true; git clone $REPO_URL" $ADMIN_USER
-		fi
-	else
-		if [ "$internet_down" -eq "0" ]; then
 			git config --global user.email "$ADMIN_USER@$HOSTNAME"
 			git config --global user.name "$ADMIN_USER"
 			su -c "cd $INSTALL_DIR/$REPO; GIT_SSL_NO_VERIFY=true; git fetch --all; git reset --hard origin/ubuntu" $ADMIN_USER
@@ -260,7 +257,7 @@ script_check()
 	echo "############################################################################"
 	echo ""
 	# Must be executed after the repo has been pulled
-	local d=`diff $PWD/$MYCMD $INSTALL_DIR/$REPO/$MYCMD | wc -l`
+	local d=`diff $SCRIPT_DIR/$MYCMD $INSTALL_DIR/$REPO/$MYCMD | wc -l`
 
 	if [ "$d" -eq "0" ]; then
 		echo "$MYCMD script is up to date so continuing to TPC-DS."
@@ -268,7 +265,7 @@ script_check()
 	else
 		echo "$MYCMD script is NOT up to date."
 		echo ""
-		cp $INSTALL_DIR/$REPO/$MYCMD $PWD/$MYCMD
+		cp $INSTALL_DIR/$REPO/$MYCMD $SCRIPT_DIR/$MYCMD
 		echo "After this script completes, restart the $MYCMD with this command:"
 		echo "./$MYCMD"
 		exit 1
@@ -278,8 +275,8 @@ script_check()
 
 check_sudo()
 {
-	cp $INSTALL_DIR/$REPO/update_sudo.sh $PWD/update_sudo.sh
-	$PWD/update_sudo.sh
+	cp $INSTALL_DIR/$REPO/update_sudo.sh $SCRIPT_DIR/update_sudo.sh
+	$SCRIPT_DIR/update_sudo.sh
 }
 
 echo_variables()
@@ -320,7 +317,7 @@ check_variables
 apt_installs
 repo_init
 #script_check
-exit_if_new_vars
+#exit_if_new_vars
 #check_sudo
 echo_variables
 copy_tpcds_variable
