@@ -49,9 +49,20 @@ for p in $(seq 1 99); do
 done
 
 echo ""
-echo "queries 114, 123, 124, and 139 have 2 queries in each file.  Need to add :EXPLAIN_ANALYZE to second query in these files"
+echo "queries 14, 23, 24, and 39 have 2 queries in each file.  Need to add :EXPLAIN_ANALYZE to second query in these files"
 echo ""
-arr=("114.tpcds.14.sql" "123.tpcds.23.sql" "124.tpcds.24.sql" "139.tpcds.39.sql")
+special_queries=(14 23 24 39)
+arr=()
+for i in "${special_queries[@]}"; do
+    skip=
+    for j in "${timed_out_queries[@]}"; do
+	[[ $i == $j ]] && { skip=1; break; }
+    done
+    [[ -n $skip ]] || arr+=("1$i.tpcds.$i.sql")
+done
+echo "special queries to be treated are:"
+echo $(join , ${arr[@]})
+echo ""
 
 for z in "${arr[@]}"; do
 	echo $z
