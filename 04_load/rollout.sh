@@ -124,8 +124,4 @@ if [[ "$EXTRACT_GPSD" == true ]]; then
 	gpsd $dbname -U $ADMIN_USER > /pivotalguru/TPC-DS/log/gpsd.out
 fi
 
-tuples="0"
-log $tuples
-
-
 end_step $step
