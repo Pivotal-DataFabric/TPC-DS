@@ -120,8 +120,8 @@ stop_gpfdist
 echo "EXTRACT_GPSD: $EXTRACT_GPSD"
 if [[ "$EXTRACT_GPSD" == true ]]; then
 	run_analyzedb
-	echo "Running: gpsd $dbname -U $ADMIN_USER > /pivotalguru/TPC-DS/log/gpsd.out"
-	gpsd $dbname -U $ADMIN_USER > /pivotalguru/TPC-DS/log/gpsd.out
+	echo "Running: gpsd $dbname -U $ADMIN_USER > $LOAD_4_DIR/../log/gpsd.out"
+	gpsd $dbname -U $ADMIN_USER > $LOAD_4_DIR/../log/gpsd.out
 fi
 
 end_step $step
