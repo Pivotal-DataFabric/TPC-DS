@@ -68,6 +68,7 @@ print_close(int tbl)
 	fpOutfile = NULL;
 	if (pTdef->outfile)
 	{
+		fflush(pTdef->outfile);
 		fclose(pTdef->outfile);
 		pTdef->outfile = NULL;
 	}
@@ -536,7 +537,6 @@ print_end (int tbl)
    if (add_term)
       fwrite(term, 1, add_term, fpOutfile);
    fprintf (fpOutfile, "\n");
-   fflush(fpOutfile);
 
    return (res);
 }

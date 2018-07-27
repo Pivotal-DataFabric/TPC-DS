@@ -72,7 +72,7 @@ split_work (int tnum, ds_key_t * pkFirstRow, ds_key_t * pkRowCount)
   *pkFirstRow = 1;
   *pkRowCount = kTotalRows;
 
-  if (kTotalRows < 1000000)
+  if (kTotalRows < 1000)
 	 {
 		if (nChild > 1)			  /* small table; only build it once */
 		  {
