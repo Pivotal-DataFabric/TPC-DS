@@ -35,7 +35,7 @@ get_version()
 	else
 		SMALL_STORAGE="appendonly=true, orientation=column"
 		MEDIUM_STORAGE="appendonly=true, orientation=column"
-		LARGE_STORAGE="appendonly=true, orientation=column"
+		LARGE_STORAGE="appendonly=true, orientation=column, compresstype=zlib, compresslevel=4"
 		E9_MEDIUM_STORAGE="APPENDONLY=TRUE, COMPRESSTYPE=QUICKLZ"
 		E9_LARGE_STORAGE="APPENDONLY=TRUE, ORIENTATION=column, COMPRESSTYPE=QUICKLZ"
 	fi
