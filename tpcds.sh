@@ -244,7 +244,6 @@ repo_init()
 			su -c "cd $INSTALL_DIR; GIT_SSL_NO_VERIFY=true; git clone $REPO_URL" $ADMIN_USER
 			git config --global user.email "$ADMIN_USER@$HOSTNAME"
 			git config --global user.name "$ADMIN_USER"
-			su -c "cd $INSTALL_DIR/$REPO; GIT_SSL_NO_VERIFY=true; git fetch --all; git reset --hard origin/ubuntu_10x" $ADMIN_USER
 		fi
 	fi
 }
