@@ -119,24 +119,30 @@ check_variables()
 		new_variable=$(($new_variable + 1))
 	fi
 	#09
+	local count=$(grep "RUN_SCORE" $CONFIG_FILE | wc -l)
+	if [ "$count" -eq "0" ]; then
+		echo "RUN_SCORE=\"true\"" >> $CONFIG_FILE
+		new_variable=$(($new_variable + 1))
+	fi
+  #10
 	local count=$(grep "OPTIMIZER" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "OPTIMIZER=\"on\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	#10
+	#11
 	local count=$(grep "QUERY_TIMEOUT" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "QUERY_TIMEOUT=\"0\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	#11
+	#12
 	local count=$(grep "EXPLAIN_PLAN" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "EXPLAIN_PLAN=\"false\"" >> $CONFIG_FILE
 		new_variable=$(($new_variable + 1))
 	fi
-	#12
+	#13
 	local count=$(grep "EXTRACT_GPSD" $CONFIG_FILE | wc -l)
 	if [ "$count" -eq "0" ]; then
 		echo "EXTRACT_GPSD=\"false\"" >> $CONFIG_FILE
@@ -324,7 +330,7 @@ copy_tpcds_variable
 export MASTER_DATA_DIRECTORY=/greenplum/data-1
 
 CMD_CD="cd \"$INSTALL_DIR/$REPO\";"
-CMD_ROLLOUT="./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCDS $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $EXPLAIN_PLAN $EXTRACT_GPSD $OPTIMIZER $QUERY_TIMEOUT"
+CMD_ROLLOUT="./rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_COMPILE_TPCDS $RUN_GEN_DATA $RUN_INIT $RUN_DDL $RUN_LOAD $RUN_SQL $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER $RUN_MULTI_USER_REPORT $RUN_SCORE $EXPLAIN_PLAN $EXTRACT_GPSD $OPTIMIZER $QUERY_TIMEOUT"
 CMD="$CMD_CD $CMD_ROLLOUT"
 su -c "$CMD" $ADMIN_USER
 exit_status=$?

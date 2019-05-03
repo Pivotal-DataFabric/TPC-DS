@@ -9,7 +9,7 @@ EXPLAIN_ANALYZE=$2
 SQL_VERSION=$3
 RANDOM_DISTRIBUTION=$4
 MULTI_USER_COUNT=$5
-EXPLAIN_PLAN=$8
+EXPLAIN_PLAN=$9
 
 if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$SQL_VERSION" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" ]]; then
 	echo "You must provide the scale as a parameter in terms of Gigabytes, true/false to run queries with EXPLAIN ANALYZE option, the SQL_VERSION, and true/false to use random distrbution."

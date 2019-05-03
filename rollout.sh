@@ -18,14 +18,15 @@ RUN_SQL="${11}"
 RUN_SINGLE_USER_REPORT="${12}"
 RUN_MULTI_USER="${13}"
 RUN_MULTI_USER_REPORT="${14}"
-EXPLAIN_PLAN="${15}"
-EXTRACT_GPSD="${16}"
-OPTIMIZER="${17}"
-QUERY_TIMEOUT="${18}"
+RUN_SCORE="${15}"
+EXPLAIN_PLAN="${16}"
+EXTRACT_GPSD="${17}"
+OPTIMIZER="${18}"
+QUERY_TIMEOUT="${19}"
 
-if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$SQL_VERSION" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCDS" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" ]]; then
+if [[ "$GEN_DATA_SCALE" == "" || "$EXPLAIN_ANALYZE" == "" || "$SQL_VERSION" == "" || "$RANDOM_DISTRIBUTION" == "" || "$MULTI_USER_COUNT" == "" || "$RUN_COMPILE_TPCDS" == "" || "$RUN_GEN_DATA" == "" || "$RUN_INIT" == "" || "$RUN_DDL" == "" || "$RUN_LOAD" == "" || "$RUN_SQL" == "" || "$RUN_SINGLE_USER_REPORT" == "" || "$RUN_MULTI_USER" == "" || "$RUN_MULTI_USER_REPORT" == "" || "$RUN_SCORE" == "" ]]; then
 	echo "You must provide the scale as a parameter in terms of Gigabytes, true/false to run queries with EXPLAIN ANALYZE option, the SQL_VERSION, and true/false to use random distrbution."
-	echo "Example: ./rollout.sh 100 false tpcds false 5 true true true true true true true true true"
+	echo "Example: ./rollout.sh 100 false tpcds false 5 true true true true true true true true true true"
 	echo "This will create 100 GB of data for this test, not run EXPLAIN ANALYZE, use standard TPC-DS, and not use random distribution."
 	echo "The next nine run options indicate if you want to force the running of those steps even if the step has already completed."
 	exit 1
@@ -61,6 +62,7 @@ echo "RUN_SQL: $RUN_SQL"
 echo "RUN_SINGLE_USER_REPORT: $RUN_SINGLE_USER_REPORT"
 echo "RUN_MULTI_USER: $RUN_MULTI_USER"
 echo "RUN_MULTI_USER_REPORT: $RUN_MULTI_USER_REPORT"
+echo "RUN_SCORE: $RUN_SCORE"
 echo "OPTIMIZER: $OPTIMIZER"
 echo "QUERY_TIMEOUT: $QUERY_TIMEOUT"
 echo "EXPLAIN_PLAN: $EXPLAIN_PLAN"
@@ -94,6 +96,9 @@ fi
 if [ "$RUN_MULTI_USER_REPORT" == "true" ]; then
 	rm -f $MAIN_ROLLOUT_DIR/log/end_multi_user_reports.log
 fi
+if [ "$RUN_SCORE" == "true" ]; then
+	rm -f $MAIN_ROLLOUT_DIR/log/end_score.log
+fi
 
 # Don't run Queries if RUN_SQL=false
 if [ "$RUN_SQL" == "false" ]; then
@@ -105,7 +110,7 @@ fi
 for i in $LIST; do
 	echo "$i/rollout.sh"
 
-	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER_REPORT $EXPLAIN_PLAN $EXTRACT_GPSD
+	$i/rollout.sh $GEN_DATA_SCALE $EXPLAIN_ANALYZE $SQL_VERSION $RANDOM_DISTRIBUTION $MULTI_USER_COUNT $RUN_SINGLE_USER_REPORT $RUN_MULTI_USER_REPORT $RUN_SCORE $EXPLAIN_PLAN $EXTRACT_GPSD
 	exit_status=$?
 	if [[ $exit_status -ne 0 ]]; then
 		echo $i/rollout.sh failed with exit status $exit_status
